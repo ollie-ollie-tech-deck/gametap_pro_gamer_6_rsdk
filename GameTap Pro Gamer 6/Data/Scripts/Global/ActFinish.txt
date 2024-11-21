@@ -360,7 +360,20 @@ event ObjectUpdate
 					arrayPos1 = options.saveSlot
 					arrayPos1 <<= 3
 					if stage.player2Enabled == true
-						saveRAM[arrayPos1] = 3
+#platform: USE_STANDALONE
+						saveRAM[arrayPos1] = PLAYER_SONIC_TAILS_A
+#endplatform
+
+#platform: USE_ORIGINS
+						switch stage.playerListPos
+						case PLAYER_SONIC_A
+							saveRAM[arrayPos1] = PLAYER_SONIC_TAILS_A
+							break
+						case PLAYER_AMY_A
+							saveRAM[arrayPos1] = PLAYER_AMY_TAILS_A
+							break
+						end switch
+#endplatform
 					else
 						saveRAM[arrayPos1] = stage.playerListPos
 					end if
@@ -383,24 +396,36 @@ event ObjectUpdate
 					saveRAM[arrayPos1] = specialStage.listPos
 					WriteSaveRAM()
 				end if
-
-				specialStage.nextZone = stage.listPos
-				stage.listPos = specialStage.listPos
-				stage.activeList = SPECIAL_STAGE
 				
-				temp0 = engine.trialMode
-				if stage.listPos >= stage.listSize
-					temp0 = true
-				end if
-
-				if temp0 == false
-					LoadStage()
+#platform: USE_ORIGINS
+				recScore = player.score
+				
+				if game.oneStageFlag != false
+					stage.listPos--
+					object.state = ACTFINISH_RETRY
 				else
-					// Invalid Stage, Go back to the title screen
-					stage.activeList = PRESENTATION_STAGE
-					stage.listPos = 0
-					LoadStage()
+#endplatform
+
+					specialStage.nextZone = stage.listPos
+					stage.listPos = specialStage.listPos
+					stage.activeList = SPECIAL_STAGE
+					
+					temp0 = engine.trialMode
+					if stage.listPos >= stage.listSize
+						temp0 = true
+					end if
+
+					if temp0 == false
+						LoadStage()
+					else
+						// Invalid Stage, Go back to the title screen
+						stage.activeList = PRESENTATION_STAGE
+						stage.listPos = 0
+						LoadStage()
+					end if
+#platform: USE_ORIGINS
 				end if
+#endplatform
 			end if
 		else
 			object.timer += 4
@@ -416,7 +441,20 @@ event ObjectUpdate
 					arrayPos1 = options.saveSlot
 					arrayPos1 <<= 3
 					if stage.player2Enabled == true
-						saveRAM[arrayPos1] = 3
+#platform: USE_STANDALONE
+						saveRAM[arrayPos1] = PLAYER_SONIC_TAILS_A
+#endplatform
+
+#platform: USE_ORIGINS
+						switch stage.playerListPos
+						case PLAYER_SONIC_A
+							saveRAM[arrayPos1] = PLAYER_SONIC_TAILS_A
+							break
+						case PLAYER_AMY_A
+							saveRAM[arrayPos1] = PLAYER_AMY_TAILS_A
+							break
+						end switch
+#endplatform
 					else
 						saveRAM[arrayPos1] = stage.playerListPos
 					end if
@@ -438,32 +476,43 @@ event ObjectUpdate
 					saveRAM[arrayPos1] = specialStage.listPos
 					WriteSaveRAM()
 				end if
-
-				if options.gameMode == MODE_TIMEATTACK
-					timeAttack.result = stage.seconds
-					timeAttack.result *= 100
-					temp0 = stage.minutes
-					temp0 *= 0x1770
-					timeAttack.result += temp0
-					timeAttack.result += stage.milliSeconds
+				
+#platform: USE_ORIGINS
+				recScore = player.score
+				
+				if game.oneStageFlag != false
 					stage.listPos--
-					CallNativeFunction2(SetLeaderboard, stage.listPos, timeAttack.result)
-					engine.state = 8
+					object.state = ACTFINISH_RETRY
 				else
-					temp0 = engine.trialMode
-					if stage.listPos >= stage.listSize
-						temp0 = true
-					end if
-
-					if temp0 == false
-						LoadStage()
+#endplatform
+					if options.gameMode == MODE_TIMEATTACK
+						timeAttack.result = stage.seconds
+						timeAttack.result *= 100
+						temp0 = stage.minutes
+						temp0 *= 0x1770
+						timeAttack.result += temp0
+						timeAttack.result += stage.milliSeconds
+						stage.listPos--
+						CallNativeFunction2(SetLeaderboard, stage.listPos, timeAttack.result)
+						engine.state = 8
 					else
-						// Invalid Stage, Go back to the title screen
-						stage.activeList = PRESENTATION_STAGE
-						stage.listPos = 0
-						LoadStage()
+						temp0 = engine.trialMode
+						if stage.listPos >= stage.listSize
+							temp0 = true
+						end if
+
+						if temp0 == false
+							LoadStage()
+						else
+							// Invalid Stage, Go back to the title screen
+							stage.activeList = PRESENTATION_STAGE
+							stage.listPos = 0
+							LoadStage()
+						end if
 					end if
+#platform: USE_ORIGINS
 				end if
+#endplatform
 			end if
 		end if
 		break
@@ -579,7 +628,18 @@ event ObjectDraw
 	temp0 = screen.xcenter
 	temp0 += 3
 	temp0 += object.playerNamePos
+#platform: USE_STANDALONE
 	DrawSpriteScreenXY(stage.playerListPos, temp0, 60) // Player name
+#endplatform
+
+#platform: USE_ORIGINS
+	if stage.playerListPos != PLAYER_AMY_A
+		DrawSpriteScreenXY(stage.playerListPos, temp0, 60)
+	else
+		DrawSpriteScreenXY(23, temp0, 60)
+	end if
+#endplatform
+
 	DrawSpriteScreenXY(4, temp0, 60) // "Has"
 
 	temp0 = screen.xcenter
@@ -659,6 +719,10 @@ event ObjectStartup
 	SpriteFrame(0, 0, 8, 11, 28, 148)		// #20 - Number 7
 	SpriteFrame(0, 0, 8, 11, 1, 160)		// #21 - Number 8
 	SpriteFrame(0, 0, 8, 11, 10, 160)		// #22 - Number 9
+	
+#platform: USE_ORIGINS
+	SpriteFrame(-96, 0, 192, 16, 1, 1)		// #23 - "Amy"
+#endplatform
 end event
 
 

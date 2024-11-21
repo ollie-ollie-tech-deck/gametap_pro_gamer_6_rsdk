@@ -79,7 +79,13 @@ private alias 13 : LOGO_IDLE_KNUX
 private alias 0 : MODE_NOSAVE
 
 // Player List Pos Aliases
-private alias 3 : PLAYER_SONIC_AND_TAILS
+private alias 0 : PLAYER_SONIC_A
+private alias 1 : PLAYER_TAILS_A
+private alias 2 : PLAYER_KNUCKLES_A
+private alias 3 : PLAYER_SONIC_TAILS_A
+private alias 4 : PLAYER_KNUCKLES_TAILS_A // (not used in this script, but left here for reference)
+private alias 5 : PLAYER_AMY_A
+private alias 6 : PLAYER_AMY_TAILS_A
 
 
 // ========================
@@ -335,7 +341,7 @@ event ObjectUpdate
 
 #platform: USE_STANDALONE
 	if stage.player2Enabled == true
-		stage.playerListPos = PLAYER_SONIC_AND_TAILS
+		stage.playerListPos = PLAYER_SONIC_TAILS_A
 	end if
 #endplatform
 
@@ -373,24 +379,26 @@ event ObjectDraw
 #endplatform
 
 	switch temp.titleCharacter
-	case 1
+	case PLAYER_TAILS_A
+#platform: USE_ORIGINS
+	case PLAYER_AMY_A
+	case PLAYER_AMY_TAILS_A
+#endplatform
 		if object.state == LOGO_P2TEXTAPPEAR_SONIC
 			temp0 = false
 		end if
 		break
 
-	case 2
+	case PLAYER_KNUCKLES_A
 		if object.state == LOGO_IDLE_TAILS
 			temp0 = false
 		end if
 		break
-
-	case 3
+	case PLAYER_SONIC_TAILS_A
 		if object.state == LOGO_ANIMATEARM_KNUX
 			temp0 = false
 		end if
 		break
-
 	end switch
 
 	// Draw Logo (Top Half)
@@ -399,8 +407,12 @@ event ObjectDraw
 	end if
 
 	switch temp.titleCharacter
-	case 0
-	case 3
+	case PLAYER_SONIC_A
+	case PLAYER_SONIC_TAILS_A
+#platform: USE_ORIGINS
+	case PLAYER_AMY_A // amy just uses sonic's title screen
+	case PLAYER_AMY_TAILS_A
+#endplatform
 		switch object.state
 		case LOGO_SETUP_SONIC
 			screen.xoffset 		 = 0
@@ -670,7 +682,7 @@ event ObjectDraw
 		end switch
 		break
 
-	case 1
+	case PLAYER_TAILS_A
 		switch object.state
 		case LOGO_SETUP_TAILS
 			screen.xoffset 		 = 0
@@ -863,7 +875,7 @@ event ObjectDraw
 		end switch
 		break
 
-	case 2
+	case PLAYER_KNUCKLES_A
 		switch object.state
 		case LOGO_SETUP_KNUX
 			screen.xoffset = 0
@@ -1109,19 +1121,19 @@ event ObjectStartup
 	SpriteFrame(8, 16, 88, 61, 165, 148) 		// Tails - Frame 3		- #14
 	SpriteFrame(6, 17, 89, 59, 333, 360) 		// Tails - Frame 4		- #15
 	SpriteFrame(6, 12, 87, 65, 423, 360) 		// Tails - Frame 5		- #16
-	SpriteFrame(8, 5, 16, 19, 452, 5) 		// Tails' Arm			- #17
+	SpriteFrame(8, 5, 16, 19, 452, 5) 			// Tails' Arm			- #17
 	SpriteFrame(3, 15, 101, 47, 2, 439) 		// Knux - Frame 1		- #18
 	SpriteFrame(3, 15, 101, 73, 2, 439) 		// Knux - Frame 2		- #19
 	SpriteFrame(0, 9, 95, 79, 104, 433) 		// Knux - Frame 3		- #20
 	SpriteFrame(1, 6, 105, 82, 200, 430) 		// Knux - Frame 4		- #21
 	SpriteFrame(1, 4, 102, 84, 306, 428) 		// Knux - Frame 5		- #22
 	SpriteFrame(5, 2, 91, 86, 409, 426) 		// Knux - Frame 6		- #23
-	SpriteFrame(8, 5, 42, 43, 469, 5) 		// Knux' Arm - Frame 1	- #24
+	SpriteFrame(8, 5, 42, 43, 469, 5) 			// Knux' Arm - Frame 1	- #24
 	SpriteFrame(8, 3, 40, 53, 218, 310) 		// Knux' Arm - Frame 2	- #25
-	SpriteFrame(8, 8, 40, 39, 471, 49) 		// Knux' Arm - Frame 3	- #26
-	SpriteFrame(8, 8, 40, 39, 471, 49) 		// Knux' Arm - Frame 4	- #27
+	SpriteFrame(8, 8, 40, 39, 471, 49) 			// Knux' Arm - Frame 3	- #26
+	SpriteFrame(8, 8, 40, 39, 471, 49) 			// Knux' Arm - Frame 4	- #27
 	SpriteFrame(8, 3, 40, 53, 218, 310) 		// Knux' Arm - Frame 5	- #28
-	SpriteFrame(8, 5, 42, 43, 469, 5) 		// Knux' Arm - Frame 6	- #29
+	SpriteFrame(8, 5, 42, 43, 469, 5) 			// Knux' Arm - Frame 6	- #29
 	SpriteFrame(-124, -66, 248, 65, 1, 364) 	// Knux In				- #30
 	SpriteFrame(-77, -66, 153, 42, 1, 222) 		// "Tails"				- #31
 	SpriteFrame(-77, -19, 93, 10, 155, 231) 	// "Miles Prower"		- #32
@@ -1130,7 +1142,7 @@ event ObjectStartup
 	SpriteFrame(52, -19, 24, 18, 165, 411) 		// "In"					- #35
 	SpriteFrame(-101, -66, 28, 42, 189, 321) 	// "&"					- #36
 
-	// Setup Player Palette Colours
+	// Setup Player Palette Colors
 	temp0 = 208
 	temp1 = 0
 	while temp1 < 14

@@ -1,0 +1,168 @@
+// ----------------------------------
+// RSDK Project: Sonic 1
+// Script Description: Crabmeat Object
+// Script Author: Christian Whitehead/Simon Thomley
+// Unpacked by Rubberduckycooly's script unpacker
+// ----------------------------------
+
+// ========================
+// Aliases
+// ========================
+
+private alias object.value0 : logos.timer
+private alias object.value1 : logos.size
+
+// Priority
+public alias 0 : PRIORITY_BOUNDS
+public alias 1 : PRIORITY_ACTIVE
+public alias 2 : PRIORITY_ALWAYS
+public alias 3 : PRIORITY_XBOUNDS
+public alias 4 : PRIORITY_XBOUNDS_DESTROY
+public alias 5 : PRIORITY_INACTIVE
+public alias 6 : PRIORITY_BOUNDS_SMALL
+public alias 7 : PRIORITY_ACTIVE_SMALL
+
+// Ink Effects
+public alias 0 : INK_NONE
+public alias 1 : INK_BLEND
+public alias 2 : INK_ALPHA
+public alias 3 : INK_ADD
+public alias 4 : INK_SUB
+
+// Flip Directions
+public alias 0 : FLIP_NONE
+public alias 1 : FLIP_X
+public alias 2 : FLIP_Y
+public alias 3 : FLIP_XY
+
+
+// ========================
+// Events
+// ========================
+
+event ObjectUpdate
+#platform: USE_ORIGINS
+	if game.titleMode != 0
+		game.titleMode = 0
+	endif
+#endplatform
+	switch object.state
+	case 0
+		logos.size = 0
+		logos.timer = 256
+		SetScreenFade(0, 0, 0, logos.timer)
+		object.state++
+		break
+	case 1
+		if logos.timer > 0
+			logos.timer -= 16
+		else
+			PlaySfx(SfxName[Gametap], 0)
+			object.state++
+		end if
+		SetScreenFade(0, 0, 0, logos.timer)
+		break
+	case 2
+		logos.timer++
+		if logos.timer == 180
+			logos.timer = 0
+			object.state++
+		end if
+		break
+	case 3
+		if logos.timer < 256
+			logos.timer += 16
+		else
+			LoadSpriteSheet("Title/Clownancy.gif")
+			object.state++
+		end if
+		SetScreenFade(0, 0, 0, logos.timer)
+		break
+
+	case 4
+		if logos.timer > 0
+			logos.timer -= 16
+		else
+			object.state++
+		end if
+		SetScreenFade(0, 0, 0, logos.timer)
+		break
+	case 5
+		logos.timer++
+		if logos.timer == 180
+			logos.timer = 0
+			object.state++
+		end if
+		break
+	case 6
+		if logos.timer < 256
+			logos.timer += 16
+		else
+			LoadSpriteSheet("Title/Ollie.gif")
+			logos.size = 1
+			object.state++
+		end if
+		SetScreenFade(0, 0, 0, logos.timer)
+		break
+
+	case 7
+		if logos.timer > 0
+			logos.timer -= 16
+		else
+			PlaySfx(SfxName[Wahoo], 0)
+			object.state++
+		end if
+		SetScreenFade(0, 0, 0, logos.timer)
+		break
+	case 8
+		logos.timer++
+		if logos.timer == 180
+			logos.timer = 0
+			object.state++
+		end if
+		break
+	case 9
+		if logos.timer < 256
+			logos.timer += 16
+		else
+			ResetObjectEntity(object.entityPos, TypeName[Logo], 0, 0, 0)
+		end if
+		SetScreenFade(0, 0, 0, logos.timer)
+		break
+	end switch
+end event
+
+
+event ObjectDraw
+	if object.state < 4
+		DrawRect(0, 0, screen.xsize, screen.ysize, 224, 224, 224, 255)
+	endif
+	DrawSpriteScreenXY(logos.size, screen.xcenter, screen.ycenter)
+end event
+
+
+event ObjectStartup
+	// Hide touch controls
+	options.touchControls = false
+	
+	LoadSpriteSheet("Title/Gametap.gif")
+	SpriteFrame(-160, -112, 320, 224, 1, 1)
+	SpriteFrame(-128, -112, 257, 224, 1, 1)
+end event
+
+
+// ========================
+// Editor Events
+// ========================
+
+event RSDKDraw
+	DrawSprite(0)
+end event
+
+
+event RSDKLoad
+	LoadSpriteSheet("Title/Gametap.gif")
+	SpriteFrame(-160, -112, 320, 224, 1, 1)
+	
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end event
